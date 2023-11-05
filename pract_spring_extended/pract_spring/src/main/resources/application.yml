@@ -1,0 +1,23 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: none
+    generate-ddl: false
+    show-sql: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQLDialect
+    open-in-view: true
+  datasource:
+    url: jdbc:mysql://${DB_SERVER}:${DB_DEFAULT_PORT}/${DB_SCHEMA}?allowPublicKeyRetrieval=true
+    username: ${DB_LOCAL_USER}
+    password: ${DB_LOCAL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 60000
+      maximum-pool-size: 5
+      minimum-idle: 5
+
+
