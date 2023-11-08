@@ -1,0 +1,33 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    generate-ddl: false
+    show-sql: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQLDialect
+    open-in-view: true
+  datasource:
+    url: jdbc:mysql://${DB_SERVER}:${DB_DEFAULT_PORT}/${DB_SCHEMA}?allowPublicKeyRetrieval=true
+    username: ${DB_LOCAL_USER}
+    password: ${DB_LOCAL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 60000
+      maximum-pool-size: 5
+      minimum-idle: 5
+
+server:
+  port: ${SPRING_AUTH_DEFAULT_PORT}
+
+app:
+  api:
+    server: ${SPRING_SERVER}
+    port: ${SPRING_DEFAULT_PORT}
+  token:
+    sign-key: 423F4528482B4D6251655468576D5A7134743677397A24432646294A404E6352
+    expiration-time-ms: 3600000
+
+
+
+

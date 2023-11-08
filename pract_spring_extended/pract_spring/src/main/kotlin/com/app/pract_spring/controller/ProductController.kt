@@ -1,10 +1,10 @@
 package com.app.pract_spring.controller
 
-import com.app.pract_spring.dto.product.request.CreateProductRequest
-import com.app.pract_spring.dto.product.request.UpdateProductRequest
-import com.app.pract_spring.dto.product.response.ProductResponse
-import com.app.pract_spring.model.product.ProductBase
+import com.app.pract_spring.payload.product.request.CreateProductRequest
+import com.app.pract_spring.payload.product.request.UpdateProductRequest
+import com.app.pract_spring.payload.product.response.ProductResponse
 import com.app.pract_spring.service.ProductService
+import org.aspectj.lang.annotation.Around
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -18,48 +18,60 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/products")
+@RequestMapping(value = [
+    "/api/v1/products",
+    "/api/v1/sellerboard/products",
+    "/api/v1/adminboard/products"
+])
 class ProductController(
     val productService: ProductService
 ) {
 
+    // By seller
     @PostMapping
-    fun createProduct(@RequestBody request: CreateProductRequest): ResponseEntity<*> =
+    fun createProduct(@RequestBody request: CreateProductRequest) =
         ResponseEntity<ProductResponse>(
             productService.createProduct(request).toResponse(),
             HttpStatus.CREATED
         )
 
+    // By everyone
     @GetMapping
-    fun getAllProducts(): ResponseEntity<*> =
+    fun getAllProducts() =
         ResponseEntity<List<ProductResponse>>(
             productService.findAllProducts().map { it.toResponse() },
             HttpStatus.OK
         )
 
+    // By everyone
     @GetMapping("/{sellerId}")
-    fun getProductBySellerId(@PathVariable("sellerId") sellerId: Long) : ResponseEntity<*> =
+    fun getProductBySellerId(@PathVariable("sellerId") sellerId: Long) =
         ResponseEntity<List<ProductResponse>>(
             productService.findAllProductsBySellerId(sellerId).map { it.toResponse() },
             HttpStatus.OK
         )
 
+    // By everyone
     @GetMapping("/{type}")
-    fun getProductsByType(@PathVariable("type") typeName: String): ResponseEntity<*> =
+    fun getProductsByType(@PathVariable("type") typeName: String) =
         ResponseEntity<List<ProductResponse>>(
             productService.findAllProductsByTypeName(typeName).map { it.toResponse() },
             HttpStatus.OK
         )
 
+    // By seller
+    // Add check if it's his product
     @PutMapping
-    fun updateProduct(@RequestBody request: UpdateProductRequest): ResponseEntity<*> =
+    fun updateProduct(@RequestBody request: UpdateProductRequest) =
         ResponseEntity<ProductResponse>(
             productService.updateProduct(request).toResponse(),
             HttpStatus.OK
         )
 
+    // By seller and admin
+    // Add check if it's his product
     @DeleteMapping
-    fun deleteProductById(@RequestParam(name = "productId") toDeleteId: Long): ResponseEntity<*> =
+    fun deleteProductById(@RequestParam(name = "productId") toDeleteId: Long) =
         ResponseEntity<ProductResponse>(
             productService.deleteProduct(toDeleteId).toResponse(),
             HttpStatus.OK

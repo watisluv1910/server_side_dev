@@ -1,44 +1,37 @@
 package com.app.pract_spring.service
 
-import com.app.pract_spring.dto.product.request.CreateProductRequest
-import com.app.pract_spring.dto.product.request.UpdateProductRequest
+import com.app.pract_spring.payload.product.request.CreateProductRequest
+import com.app.pract_spring.payload.product.request.UpdateProductRequest
 import com.app.pract_spring.model.product.ProductBase
 import com.app.pract_spring.model.product.ProductType
+import com.app.pract_spring.model.user.role.EUserRole
 import com.app.pract_spring.repository.ProductRepository
 import com.app.pract_spring.repository.ProductTypeRepository
-import com.app.pract_spring.repository.UserRepository
-import org.springframework.data.domain.Example
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
-import java.util.NoSuchElementException
 
 @Service
 @Transactional
 class ProductService(
     private val productRepository: ProductRepository,
-    private val userRepository: UserRepository,
+    private val userService: UserService,
     private val productTypeRepository: ProductTypeRepository
 ) {
     fun createProduct(request: CreateProductRequest): ProductBase {
-        val foundProductType = productTypeRepository.findByName(request.typeName)
+        val foundSeller = userService.findUserById(request.sellerId)
+
+        if (!foundSeller.roles.map { it.roleName }.contains(EUserRole.SELLER)) {
+            userService.addRoleToUser(foundSeller, EUserRole.SELLER.name)
+        }
 
         return productRepository.save(
             ProductBase().apply {
                 name = request.name
                 costUSD = request.costUSD
-                seller = userRepository.findById(request.sellerId).orElseThrow {
-                    throw ResponseStatusException(HttpStatus.NOT_FOUND, "The specified user does not exist.")
-                }
-                if (foundProductType.isEmpty)
-                    type = productTypeRepository.save(
-                        ProductType().also {
-                            type -> type.name = request.typeName
-                        }
-                    )
-                else
-                    type = foundProductType.get()
+                seller = foundSeller
+                type = validateProductType(request.typeName)
             }
         )
     }
@@ -49,11 +42,20 @@ class ProductService(
         product.apply {
             name = request.name
             costUSD = request.costUSD
-            seller = userRepository.findById(request.sellerId).orElseThrow()
-            type = productTypeRepository.findByName(request.typeName).orElseThrow()
+            seller = userService.findUserById(request.sellerId)
+            type = validateProductType(request.typeName)
         }
 
         return productRepository.save(product)
+    }
+
+    private fun validateProductType(typeName: String): ProductType {
+        val foundProductType = productTypeRepository.findByName(typeName)
+
+        return if (foundProductType.isEmpty)
+            productTypeRepository.save(ProductType().also { type -> type.name = typeName })
+        else
+            foundProductType.get()
     }
 
     fun findProductById(productId: Long): ProductBase {
@@ -65,7 +67,7 @@ class ProductService(
     fun findAllProducts(): List<ProductBase> = productRepository.findAll()
 
     fun findAllProductsBySellerId(sellerId: Long): List<ProductBase> {
-        val seller = userRepository.findById(sellerId).orElseThrow()
+        val seller = userService.findUserById(sellerId)
         return productRepository.findAllBySeller(seller)
     }
 

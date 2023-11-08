@@ -1,6 +1,5 @@
 package com.app.pract_spring.service
 
-import com.app.pract_spring.dto.user.response.UserResponse
 import com.app.pract_spring.model.user.User
 import com.app.pract_spring.model.user.role.EUserRole
 import com.app.pract_spring.model.user.role.UserRole
@@ -32,7 +31,7 @@ class UserService(
         return savedUser
     }
 
-    private fun addRoleToUser(user: User, roleName: String): UserRole =
+    fun addRoleToUser(user: User, roleName: String): UserRole =
         userRoleRepository.save(
             UserRole(
                 id = user.id!!,

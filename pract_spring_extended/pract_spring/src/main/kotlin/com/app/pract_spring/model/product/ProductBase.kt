@@ -1,6 +1,6 @@
 package com.app.pract_spring.model.product
 
-import com.app.pract_spring.dto.product.response.ProductResponse
+import com.app.pract_spring.payload.product.response.ProductResponse
 import com.app.pract_spring.model.user.User
 import jakarta.persistence.*
 import org.hibernate.proxy.HibernateProxy

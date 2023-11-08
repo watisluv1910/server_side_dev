@@ -3,17 +3,14 @@ version: '3.9'
 
 services:
 
-  # App backend service
-  app-server:
+  # App auth service
+  app-auth:
     build:
-      context: pract_spring
+      context: pract_spring_auth
       dockerfile: Dockerfile
     ports:
-      - '${SPRING_LOCAL_PORT:?error}:${SPRING_DOCKER_PORT:?error}'
+      - '${SPRING_AUTH_DEFAULT_PORT:?error}:${SPRING_DEFAULT_PORT:?error}'
     restart: no
-    depends_on:
-      app-db:
-        condition: service_healthy
     environment:
       DB_SCHEMA: $DB_SCHEMA
       DB_SERVER: app-db
@@ -23,12 +20,33 @@ services:
     networks:
       - backend
 
+  # App backend service
+  app-server:
+    build:
+      context: pract_spring
+      dockerfile: Dockerfile
+    expose:
+      - '${SPRING_DEFAULT_PORT:?error}'
+    restart: no
+    depends_on:
+      app-db:
+        condition: service_healthy
+    environment:
+      DB_SCHEMA: $DB_SCHEMA
+      DB_DEFAULT_PORT: $DB_DEFAULT_PORT
+      DB_LOCAL_USER: $DB_DOCKER_USER
+      DB_LOCAL_PASSWORD: $DB_DOCKER_PASSWORD
+      DB_SERVER: app-db
+      SPRING_AUTH_SERVER: app-auth
+    networks:
+      - backend
+
   # Database service (Mysql)
   app-db:
     build:
       context: database
       dockerfile: Dockerfile
-    ports:
+    expose:
       - '${DB_DEFAULT_PORT:?error}'
     restart: no
     healthcheck:
@@ -53,3 +71,4 @@ volumes:
 
 networks:
   backend:
+    driver: bridge

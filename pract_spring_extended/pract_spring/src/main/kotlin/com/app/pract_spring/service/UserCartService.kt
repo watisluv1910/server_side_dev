@@ -1,7 +1,7 @@
 package com.app.pract_spring.service
 
-import com.app.pract_spring.dto.product.response.CartResponse
-import com.app.pract_spring.dto.product.response.ProductResponse
+import com.app.pract_spring.payload.product.response.CartResponse
+import com.app.pract_spring.payload.product.response.ProductResponse
 import com.app.pract_spring.model.user.cart.UserCart
 import com.app.pract_spring.model.user.cart.UserCartPK
 import com.app.pract_spring.repository.UserCartRepository

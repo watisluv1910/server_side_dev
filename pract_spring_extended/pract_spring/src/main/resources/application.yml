@@ -20,4 +20,11 @@ spring:
       maximum-pool-size: 5
       minimum-idle: 5
 
+server:
+  port: ${SPRING_DEFAULT_PORT}
+
+app:
+  auth:
+    server: ${SPRING_AUTH_SERVER}
+    port: ${SPRING_DEFAULT_PORT}
 
