@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>Hello, World!</title>
+</head>
+<body>
+    <h2>Hello, {{ username }}!</h2>
+    <form method="get" action="{% url 'hello' %}">
+        <label for="username">Enter your name:</label>
+        <label>
+            <input type="text" name="username" required>
+        </label>
+        <input type="submit" value="Say Hello">
+    </form>
+</body>
+</html>
