@@ -1,0 +1,55 @@
+{% load static %}
+<!doctype html>
+<html lang="en-US" class="theme-dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}">
+    <title>{{ title }}</title>
+</head>
+<body class="main__content">
+    <header id="main-header">
+        <div class="ff-headline-5">{{ title }}</div>
+    </header>
+
+    {% if website.debug %}
+        <div style="margin-block: 20px; padding: 20px; background: red; color: white" class="ff-body-1 container">
+            You are in debug mode. The address is {{ website.url }}
+            <br>
+            The response time was: {{ website.response_time }}
+        </div>
+    {% endif %}
+
+    {% if management_info.content %}
+        <div style="margin-block: 20px; padding: 20px; background: blue; color: white" class="ff-body-1">
+            {% for key, value in management_info.content.items %}
+                <div class="">
+                    <h2 class="ff-headline-5">{{ key }}:</h2>
+                    {% if value.items %}
+                        <table>
+                            {% for sub_key, sub_value in value.items %}
+                                <tr>
+                                    <td>{{ sub_key }}:</td>
+                                    <td>{{ sub_value }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% else %}
+                        <p>{{ value }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="margin-block: 20px; padding: 20px; background: yellow; color: black">
+            Waiting for management info...
+        </div>
+    {% endif %}
+    
+    <div class="img__container" style="width: 400px; height: 400px">
+        <img src="data:image/png;base64,{{ graph_image }}" alt="User Statistics Graph" class="img-wrapper">
+    </div>
+</body>
+</html>
