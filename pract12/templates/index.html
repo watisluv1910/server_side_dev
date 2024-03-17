@@ -1,5 +1,4 @@
 {% load static %}
-<!doctype html>
 <html lang="en-US" class="theme-dark">
 <head>
     <meta charset="UTF-8">
@@ -34,13 +33,13 @@
                                     <td>{{ sub_key }}:</td>
                                     <td>{{ sub_value }}</td>
                                 </tr>
-                            {% endfor %}
+                            {% end for %}
                         </table>
                     {% else %}
                         <p>{{ value }}</p>
                     {% endif %}
                 </div>
-            {% endfor %}
+            {% end for %}
         </div>
     {% else %}
         <div style="margin-block: 20px; padding: 20px; background: yellow; color: black">
